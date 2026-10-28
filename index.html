@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Інтерактивна карта інтересів «Ікігай»</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .ikigai-circle { transition: all 0.3s ease; }
+        .drag-item { cursor: grab; user-select: none; }
+        .drag-item:active { cursor: grabbing; }
+        .modal-backdrop { background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400 bg-clip-text text-transparent">
+                    Ікігай: Пошук покликання
+                </h1>
+                <p class="text-xs text-slate-400">Інтерактивний тренажер для вибору професії майбутнього</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="resetIkigai()" class="flex items-center gap-1 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-rose-300 rounded-xl text-sm transition border border-slate-700" title="Очистити всі поля">
+                    🔄 Скинути
+                </button>
+                <button onclick="openSettingsModal()" class="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition border border-slate-700">
+                    ⚙️ <span id="apiStatusText">Налаштування ШІ</span>
+                </button>
+                <button onclick="analyzeIkigai()" class="px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 font-semibold text-white rounded-xl shadow-lg shadow-indigo-500/25 transition flex items-center gap-2">
+                    ✨ Розрахувати Ікігай (Gemini)
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8 w-full flex-grow">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+            <!-- Left Panel: Tags & Input -->
+            <div class="space-y-6">
+                <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl">
+                    <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-3">Додати власний варіант</h2>
+                    <div class="flex gap-2">
+                        <input type="text" id="newTagInput" placeholder="Наприклад: 3D-моделювання"
+                               class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-indigo-500 text-slate-100">
+                        <button onclick="addNewTag()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl text-sm transition">
+                            + Додати
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400">Банк інтересів та навичок</h2>
+                        <span class="text-xs text-slate-500">Перетягуйте у кола</span>
+                    </div>
+                    <div id="tagsBank" class="flex flex-wrap gap-2 min-h-[160px] p-3 bg-slate-950/50 rounded-xl border border-dashed border-slate-800 max-h-72 overflow-y-auto"
+                         ondragover="allowDrop(event)" ondrop="dropToBank(event)">
+                    </div>
+                </div>
+
+                <div class="bg-indigo-950/40 border border-indigo-900/50 p-4 rounded-2xl text-xs text-indigo-300 space-y-2">
+                    <p class="font-semibold flex items-center gap-1.5 text-indigo-200">
+                        💡 Як працювати з тренажером:
+                    </p>
+                    <ul class="list-disc list-inside space-y-1 text-slate-400">
+                        <li>Перетягуйте стікери у відповідні сфери Ікігай.</li>
+                        <li>Натисніть «Скинути», щоб повернути теги у банк.</li>
+                        <li>Натисніть кнопку розрахунку для аналізу від Gemini.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Panel: Interactive Ikigai Venn Diagram -->
+            <div class="lg:col-span-2 relative flex flex-col items-center justify-center bg-slate-900/40 p-6 rounded-3xl border border-slate-800 min-h-[600px]">
+                <div class="relative w-full max-w-[550px] aspect-square">
+
+                    <div id="zone-love" ondragover="allowDrop(event)" ondrop="dropToZone(event, 'love')"
+                         class="ikigai-circle absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-sky-500/20 border-2 border-sky-400/60 p-4 flex flex-col items-center justify-start text-center">
+                        <span class="text-xs font-bold uppercase tracking-wider text-sky-300 mt-2 pointer-events-none">1. ЛЮБИТЬ</span>
+                        <span class="text-[10px] text-sky-400/80 pointer-events-none mb-2">(Захоплення, хобі)</span>
+                        <div class="tags-container flex flex-wrap gap-1 justify-center w-full overflow-y-auto max-h-40"></div>
+                    </div>
+
+                    <div id="zone-skill" ondragover="allowDrop(event)" ondrop="dropToZone(event, 'skill')"
+                         class="ikigai-circle absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 rounded-full bg-rose-500/20 border-2 border-rose-400/60 p-4 flex flex-col items-center justify-start text-center">
+                        <span class="text-xs font-bold uppercase tracking-wider text-rose-300 mt-2 pointer-events-none">2. ВМІЄ</span>
+                        <span class="text-[10px] text-rose-400/80 pointer-events-none mb-2">(Сильні сторони)</span>
+                        <div class="tags-container flex flex-wrap gap-1 justify-center w-full overflow-y-auto max-h-40"></div>
+                    </div>
+
+                    <div id="zone-need" ondragover="allowDrop(event)" ondrop="dropToZone(event, 'need')"
+                         class="ikigai-circle absolute top-1/2 right-0 -translate-y-1/2 w-64 h-64 rounded-full bg-amber-500/20 border-2 border-amber-400/60 p-4 flex flex-col items-center justify-start text-center">
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-300 mt-2 pointer-events-none">3. ПОТРІБНО СВІТУ</span>
+                        <span class="text-[10px] text-amber-400/80 pointer-events-none mb-2">(Тренди, користь)</span>
+                        <div class="tags-container flex flex-wrap gap-1 justify-center w-full overflow-y-auto max-h-40"></div>
+                    </div>
+
+                    <div id="zone-paid" ondragover="allowDrop(event)" ondrop="dropToZone(event, 'paid')"
+                         class="ikigai-circle absolute bottom-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-emerald-500/20 border-2 border-emerald-400/60 p-4 flex flex-col items-center justify-end text-center">
+                        <div class="tags-container flex flex-wrap gap-1 justify-center w-full overflow-y-auto max-h-40 mb-2"></div>
+                        <span class="text-[10px] text-emerald-400/80 pointer-events-none">(Ніші, ринок)</span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-300 mb-2 pointer-events-none">4. ПЛАТЯТЬ ГРОШІ</span>
+                    </div>
+
+                    <button onclick="analyzeIkigai()"
+                            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-600 border-4 border-slate-900 shadow-2xl flex flex-col items-center justify-center text-center p-2 hover:scale-105 transition transform cursor-pointer group z-20">
+                        <span class="text-xs font-extrabold tracking-widest text-white uppercase group-hover:scale-110 transition">ІКІГАЙ</span>
+                        <span class="text-[9px] text-indigo-200 mt-0.5 font-medium">Розрахувати професію</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: Settings -->
+    <div id="settingsModal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">⚙️ Налаштування Gemini API</h3>
+            <p class="text-xs text-slate-400">Введіть свій Google AI Studio API-ключ (починається з AIza...).</p>
+            <div>
+                <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">API Key</label>
+                <input type="password" id="apiKeyInput" placeholder="AIzaSy..."
+                       class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="saveApiKey()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-medium transition">Зберегти</button>
+                <button onclick="closeSettingsModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition">Закрити</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Results -->
+    <div id="resultModal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-4xl w-full shadow-2xl space-y-6 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-start border-b border-slate-800 pb-4">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-100 flex items-center gap-2">РЕКОМЕНДОВАНІ НАПРЯМКИ:</h3>
+                    <p class="text-xs text-slate-400" id="resultSubtitle">Аналіз від штучного інтелекту Gemini</p>
+                </div>
+                <button onclick="closeResultModal()" class="text-slate-400 hover:text-white text-xl">✕</button>
+            </div>
+
+            <div id="resultContent" class="space-y-4 overflow-y-auto flex-1 text-sm text-slate-300 pr-2">
+                <!-- Injected via JS -->
+            </div>
+
+            <div class="border-t border-slate-800 pt-4 flex justify-between items-center">
+                <span class="text-xs text-slate-500">Профорієнтаційний тренажер</span>
+                <button onclick="closeResultModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl text-sm transition">Зрозуміло!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Application Logic -->
+    <script>
+        const defaultTags = [
+            "Ігри", "Відеомонтаж", "Соцмережі", "Англійська мова",
+            "Комп'ютери", "Спілкування", "Малювання", "Аналітика",
+            "Маркетинг", "IT-сфера", "Кібербезпека", "TikTok / Shorts",
+            "Програмування", "Музика", "Спорт", "Дизайн",
+            "Фотографія", "Писати тексти", "Організація подій", "Психологія",
+            "Штучний інтелект", "Екологія", "Фінанси", "Блогерство"
+        ];
+
+        let zonesData = {
+            bank: [...defaultTags],
+            love: [],
+            skill: [],
+            need: [],
+            paid: []
+        };
+
+        window.addEventListener("DOMContentLoaded", () => {
+            renderTags();
+            checkApiKeyStatus();
+            const savedKey = localStorage.getItem('gemini_api_key');
+            if (savedKey) {
+                document.getElementById('apiKeyInput').value = savedKey;
+            }
+        });
+
+        function renderTags() {
+            const bankContainer = document.getElementById('tagsBank');
+            bankContainer.innerHTML = zonesData.bank.map(tag => createTagElement(tag, 'bank')).join('');
+
+            ['love', 'skill', 'need', 'paid'].forEach(zoneKey => {
+                const container = document.querySelector(`#zone-${zoneKey} .tags-container`);
+                container.innerHTML = zonesData[zoneKey].map(tag => createTagElement(tag, zoneKey)).join('');
+            });
+        }
+
+        function createTagElement(text, location) {
+            return `
+                <div draggable="true" ondragstart="drag(event, '${text}', '${location}')"
+                     class="drag-item px-2.5 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-lg text-xs font-medium flex items-center gap-1 shadow-sm transition">
+                    <span>${text}</span>
+                    <button onclick="removeTag('${text}', '${location}')" class="text-slate-500 hover:text-rose-400 ml-1">✕</button>
+                </div>
+            `;
+        }
+
+        function drag(event, text, fromLocation) {
+            event.dataTransfer.setData("text/plain", JSON.stringify({ text, fromLocation }));
+        }
+
+        function allowDrop(event) { event.preventDefault(); }
+
+        function dropToZone(event, toZone) {
+            event.preventDefault();
+            const data = JSON.parse(event.dataTransfer.getData("text/plain"));
+            zonesData[data.fromLocation] = zonesData[data.fromLocation].filter(t => t !== data.text);
+            if (!zonesData[toZone].includes(data.text)) {
+                zonesData[toZone].push(data.text);
+            }
+            renderTags();
+        }
+
+        function dropToBank(event) {
+            event.preventDefault();
+            const data = JSON.parse(event.dataTransfer.getData("text/plain"));
+            zonesData[data.fromLocation] = zonesData[data.fromLocation].filter(t => t !== data.text);
+            if (!zonesData.bank.includes(data.text)) {
+                zonesData.bank.push(data.text);
+            }
+            renderTags();
+        }
+
+        function addNewTag() {
+            const input = document.getElementById('newTagInput');
+            const val = input.value.trim();
+            if (val && !zonesData.bank.includes(val)) {
+                zonesData.bank.push(val);
+                input.value = '';
+                renderTags();
+            }
+        }
+
+        function removeTag(text, location) {
+            zonesData[location] = zonesData[location].filter(t => t !== text);
+            renderTags();
+        }
+
+        function resetIkigai() {
+            const allTags = [
+                ...defaultTags,
+                ...zonesData.bank,
+                ...zonesData.love,
+                ...zonesData.skill,
+                ...zonesData.need,
+                ...zonesData.paid
+            ];
+            zonesData.bank = [...new Set(allTags)];
+            zonesData.love = [];
+            zonesData.skill = [];
+            zonesData.need = [];
+            zonesData.paid = [];
+            renderTags();
+        }
+
+        function openSettingsModal() { document.getElementById('settingsModal').classList.remove('hidden'); }
+        function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); }
+        function closeResultModal() { document.getElementById('resultModal').classList.add('hidden'); }
+
+        function saveApiKey() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            if(key) {
+                localStorage.setItem('gemini_api_key', key);
+            } else {
+                localStorage.removeItem('gemini_api_key');
+            }
+            checkApiKeyStatus();
+            closeSettingsModal();
+        }
+
+        function checkApiKeyStatus() {
+            const key = localStorage.getItem('gemini_api_key');
+            const statusText = document.getElementById('apiStatusText');
+            if (key) {
+                statusText.innerText = "Gemini AI: Підключено 🟢";
+            } else {
+                statusText.innerText = "Авто-режим 🟢";
+            }
+        }
+
+        // Функція перемикання блоку демонстрації робіт прямо в картці
+        window.toggleDemo = function(index) {
+            const demoBox = document.getElementById(`demo-box-${index}`);
+            if (demoBox.classList.contains('hidden')) {
+                demoBox.classList.remove('hidden');
+            } else {
+                demoBox.classList.add('hidden');
+            }
+        }
+
+        function renderCardsUI(cardsData, parentMsg, subtitleText) {
+            const container = document.getElementById('resultContent');
+            const subtitle = document.getElementById('resultSubtitle');
+            const icons = ["🎬", "📢", "🎮", "💡", "🚀", "📈", "💻", "🎨", "⚡"];
+
+            let cardsHtml = `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    ${cardsData.map((card, idx) => `
+                        <div class="bg-slate-950/90 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-3 shadow-xl">
+                            <div>
+                                <div class="flex justify-between items-start">
+                                    <div class="text-xl mb-1">${icons[idx % icons.length]}</div>
+                                    <button onclick="toggleDemo(${idx})" class="text-[11px] px-2.5 py-1 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 rounded-lg transition flex items-center gap-1">
+                                        👁️ Демо
+                                    </button>
+                                </div>
+                                <h4 class="font-bold text-slate-100 text-base leading-snug mt-1">${card.title}</h4>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">${card.desc}</p>
+
+                            <!-- Прихований блок демонстрації робіт -->
+                            <div id="demo-box-${idx}" class="hidden mt-3 p-3 bg-indigo-950/50 border border-indigo-900/60 rounded-xl space-y-2 text-xs text-slate-300 animate-fadeIn">
+                                <div class="font-semibold text-indigo-300 flex items-center gap-1">
+                                    ⚡ Приклад проєкту:
+                                </div>
+                                <p class="text-slate-300 leading-snug italic">${card.demo || "Створення типового проєкту або інтерактивного макету у цій сфері."}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            if (parentMsg) {
+                cardsHtml += `
+                    <div class="bg-slate-950/90 border border-slate-800 p-5 rounded-2xl space-y-2 mt-4 shadow-xl">
+                        <div class="flex items-center gap-2 text-amber-400 font-bold text-xs">
+                            💬 Повідомлення для батьків та фасилітаторів:
+                        </div>
+                        <p class="text-xs text-slate-300 italic leading-relaxed">
+                            «${parentMsg}»
+                        </p>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = cardsHtml;
+            subtitle.innerText = subtitleText;
+        }
+
+        function generateDynamicFallback() {
+            const love = zonesData.love.join(', ') || 'улюблені справи';
+            const skill = zonesData.skill.join(', ') || 'практичні навички';
+
+            let cards = [
+                {
+                    title: "Цифровий креатор / Контент-продюсер",
+                    desc: `Створення медіапродуктів та проєктів на основі інтересу: ${love}.`,
+                    demo: "Монтаж короткого TikTok/Shorts ролика з динамічними субтитрами та кольорокорекцією."
+                },
+                {
+                    title: "IT-фахівець / Аналітик рішень",
+                    desc: `Застосування системного мислення та вмінь: ${skill}.`,
+                    demo: "Розробка простого скрипта на Python для автоматизації рутинної таблиці або побудова дашборду."
+                },
+                {
+                    title: "Сучасний спеціаліст цифрового ринку",
+                    desc: "Динамічний напрямок розвитку на перетині новітніх технологій та трендів.",
+                    demo: "Побудова маркетингової стратегії та оформлення візуального брендбуку в Figma."
+                }
+            ];
+            const parentMsg = `Шановні батьки! Поєднання зацікавлень у сферах (${love}) та вмінь (${skill}) дає дитині можливість розвиватися у високооплачуваних професіях з гнучким графіком.`;
+            renderCardsUI(cards, parentMsg, "Швидкий локальний результат");
+        }
+
+        async function analyzeIkigai() {
+            const modal = document.getElementById('resultModal');
+            const container = document.getElementById('resultContent');
+
+            modal.classList.remove('hidden');
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-12 space-y-3">
+                    <div class="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-xs text-slate-400">Швидкий аналіз Gemini 3.8 Flash...</p>
+                </div>
+            `;
+
+            const apiKey = localStorage.getItem('gemini_api_key');
+
+            if (!apiKey) {
+                setTimeout(() => generateDynamicFallback(), 300);
+                return;
+            }
+
+            const promptText = `Проаналізуй карту Ікігай українською.
+Для кожної з 3 професій окрім назви та опису обов'язково придумай приклад демонстраційного проєкту (демо), який міг би створити такий фахівець.
+
+Поверни СТРОГО валідний JSON без маркдауну:
+{
+  "cards": [
+    {"title": "Професія 1", "desc": "Короткий опис", "demo": "Приклад практичного демо-проєкту в один рядок"},
+    {"title": "Професія 2", "desc": "Короткий опис", "demo": "Приклад практичного демо-проєкту в один рядок"},
+    {"title": "Професія 3", "desc": "Короткий опис", "demo": "Приклад практичного демо-проєкту в один рядок"}
+  ],
+  "parentMessage": "Коротке повідомлення для батьків."
+}`;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: promptText }] }],
+                        generationConfig: {
+                            temperature: 0.1,
+                            maxOutputTokens: 400
+                        }
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error?.message || `Помилка: ${response.status}`);
+                }
+
+                if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+                    let rawText = data.candidates[0].content.parts[0].text.trim();
+                    rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+                    const parsedData = JSON.parse(rawText);
+
+                    renderCardsUI(parsedData.cards, parsedData.parentMessage, "Згенеровано за допомогою Gemini 3.8 Flash");
+                } else {
+                    throw new Error("Некоректна відповідь");
+                }
+
+            } catch (error) {
+                console.warn("Помилка навантаження API, перемикаємо на локальний генератор:", error);
+                generateDynamicFallback();
+            }
+        }
+    </script>
+</body>
+</html>
