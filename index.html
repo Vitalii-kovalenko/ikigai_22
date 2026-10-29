@@ -15,7 +15,6 @@
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
-    <!-- Header -->
     <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
             <div>
@@ -38,11 +37,8 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 py-8 w-full flex-grow">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-
-            <!-- Left Panel -->
             <div class="space-y-6">
                 <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl">
                     <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-3">Додати власний варіант</h2>
@@ -69,38 +65,42 @@
                     <p class="font-semibold flex items-center gap-1.5 text-indigo-200">💡 Як працювати з тренажером:</p>
                     <ul class="list-disc list-inside space-y-1 text-slate-400">
                         <li>Перетягуйте стікери у відповідні сфери Ікігай.</li>
-                        <li>Натисніть «Скинути», щоб повернути теги у банк.</li>
-                        <li>Натисніть кнопку розрахунку для глибокого аналізу.</li>
+                        <li>Натискайте ✕ на тезі, щоб прибрати його з кола.</li>
+                        <li>Використовуйте «Запропонувати через ШІ» для зон 3 і 4.</li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Right Panel -->
             <div class="lg:col-span-2 relative flex flex-col items-center justify-center bg-slate-900/40 p-6 rounded-3xl border border-slate-800 min-h-[600px]">
                 <div class="relative w-full max-w-[550px] aspect-square">
-
-                    <div id="zone-love" class="drop-zone ikigai-circle absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-sky-500/20 border-2 border-sky-400/60 p-4 flex flex-col items-center justify-start text-center" data-zone="love">
-                        <span class="text-xs font-bold uppercase tracking-wider text-sky-300 mt-2 pointer-events-none">1. ЛЮБИТЬ</span>
-                        <span class="text-[10px] text-sky-400/80 pointer-events-none mb-2">(Захоплення, хобі)</span>
-                        <div class="tags-container flex flex-wrap gap-1 justify-center w-full overflow-y-auto max-h-40 pointer-events-none"></div>
+                    <div id="zone-love" class="drop-zone ikigai-circle absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-sky-500/20 border-2 border-sky-400/60 p-4 flex flex-col items-center justify-start text-center z-10" data-zone="love">
+                        <span class="text-xs font-bold uppercase tracking-wider text-sky-300 mt-2">1. ЛЮБИТЬ</span>
+                        <span class="text-[10px] text-sky-400/80 mb-2">(Захоплення, хобі)</span>
+                        <div class="tags-container flex flex-wrap gap-1 justify-center w-full overflow-y-auto max-h-36"></div>
                     </div>
 
-                    <div id="zone-skill" class="drop-zone ikigai-circle absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 rounded-full bg-rose-500/20 border-2 border-rose-400/60 p-4 flex flex-col items-center justify-start text-center" data-zone="skill">
-                        <span class="text-xs font-bold uppercase tracking-wider text-rose-300 mt-2 pointer-events-none">2. ВМІЄ</span>
-                        <span class="text-[10px] text-rose-400/80 pointer-events-none mb-2">(Сильні сторони)</span>
-                        <div class="tags-container flex flex-wrap gap-1 justify-center w-full overflow-y-auto max-h-40 pointer-events-none"></div>
+                    <div id="zone-skill" class="drop-zone ikigai-circle absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 rounded-full bg-rose-500/20 border-2 border-rose-400/60 p-4 flex flex-col items-center justify-start text-center z-10" data-zone="skill">
+                        <span class="text-xs font-bold uppercase tracking-wider text-rose-300 mt-2">2. ВМІЄ</span>
+                        <span class="text-[10px] text-rose-400/80 mb-2">(Сильні сторони)</span>
+                        <div class="tags-container flex flex-wrap gap-1 justify-center w-full overflow-y-auto max-h-36"></div>
                     </div>
 
-                    <div id="zone-need" class="drop-zone ikigai-circle absolute top-1/2 right-0 -translate-y-1/2 w-64 h-64 rounded-full bg-amber-500/20 border-2 border-amber-400/60 p-4 flex flex-col items-center justify-start text-center" data-zone="need">
-                        <span class="text-xs font-bold uppercase tracking-wider text-amber-300 mt-2 pointer-events-none">3. ПОТРІБНО СВІТУ</span>
-                        <span class="text-[10px] text-amber-400/80 pointer-events-none mb-2">(Тренди, користь)</span>
-                        <div class="tags-container flex flex-wrap gap-1 justify-center w-full overflow-y-auto max-h-40 pointer-events-none"></div>
+                    <div id="zone-need" class="drop-zone ikigai-circle absolute top-1/2 right-0 -translate-y-1/2 w-64 h-64 rounded-full bg-amber-500/20 border-2 border-amber-400/60 p-4 flex flex-col items-center justify-start text-center z-10" data-zone="need">
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-300 mt-2">3. ПОТРІБНО СВІТУ</span>
+                        <span class="text-[10px] text-amber-400/80 mb-1">(Тренди, користь)</span>
+                        <button onclick="suggestTags('need')" class="mb-2 px-2 py-0.5 text-[10px] bg-amber-600/40 hover:bg-amber-600/60 text-amber-200 rounded-lg border border-amber-500/40 transition">
+                            ✨ Запропонувати через ШІ
+                        </button>
+                        <div class="tags-container flex flex-wrap gap-1 justify-center w-full overflow-y-auto max-h-28"></div>
                     </div>
 
-                    <div id="zone-paid" class="drop-zone ikigai-circle absolute bottom-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-emerald-500/20 border-2 border-emerald-400/60 p-4 flex flex-col items-center justify-end text-center" data-zone="paid">
-                        <div class="tags-container flex flex-wrap gap-1 justify-center w-full overflow-y-auto max-h-40 mb-2 pointer-events-none"></div>
-                        <span class="text-[10px] text-emerald-400/80 pointer-events-none">(Ніші, ринок)</span>
-                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-300 mb-2 pointer-events-none">4. ПЛАТЯТЬ ГРОШІ</span>
+                    <div id="zone-paid" class="drop-zone ikigai-circle absolute bottom-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-emerald-500/20 border-2 border-emerald-400/60 p-4 flex flex-col items-center justify-end text-center z-10" data-zone="paid">
+                        <div class="tags-container flex flex-wrap gap-1 justify-center w-full overflow-y-auto max-h-28 mb-1"></div>
+                        <button onclick="suggestTags('paid')" class="mb-1 px-2 py-0.5 text-[10px] bg-emerald-600/40 hover:bg-emerald-600/60 text-emerald-200 rounded-lg border border-emerald-500/40 transition">
+                            ✨ Запропонувати через ШІ
+                        </button>
+                        <span class="text-[10px] text-emerald-400/80">(Ніші, ринок)</span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-300 mb-2">4. ПЛАТЯТЬ ГРОШІ</span>
                     </div>
 
                     <button onclick="analyzeIkigai()"
@@ -113,7 +113,6 @@
         </div>
     </main>
 
-    <!-- Settings Modal -->
     <div id="settingsModal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
             <h3 class="text-lg font-bold text-slate-100">⚙️ Налаштування ШІ</h3>
@@ -130,7 +129,23 @@
         </div>
     </div>
 
-    <!-- Results Modal -->
+    <div id="suggestModal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-lg w-full shadow-2xl space-y-5">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-100" id="suggestTitle">Пропозиції від ШІ</h3>
+                    <p class="text-xs text-slate-400 mt-1" id="suggestSubtitle">Оберіть теги, які хочете додати</p>
+                </div>
+                <button onclick="closeSuggestModal()" class="text-slate-400 hover:text-white text-xl">✕</button>
+            </div>
+            <div id="suggestContent" class="space-y-3 max-h-80 overflow-y-auto"></div>
+            <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+                <button onclick="addAllSuggestions()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-medium transition">Додати всі</button>
+                <button onclick="closeSuggestModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition">Закрити</button>
+            </div>
+        </div>
+    </div>
+
     <div id="resultModal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-4xl w-full shadow-2xl space-y-6 max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-start border-b border-slate-800 pb-4">
@@ -140,9 +155,7 @@
                 </div>
                 <button onclick="closeResultModal()" class="text-slate-400 hover:text-white text-xl">✕</button>
             </div>
-
             <div id="resultContent" class="space-y-4 overflow-y-auto flex-1 text-sm text-slate-300 pr-2"></div>
-
             <div class="border-t border-slate-800 pt-4 flex justify-between items-center">
                 <span class="text-xs text-slate-500">Профорієнтаційний тренажер</span>
                 <button onclick="closeResultModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl text-sm transition">Зрозуміло!</button>
@@ -152,12 +165,10 @@
 
     <script>
         const defaultTags = [
-            "Ігри", "Відеомонтаж", "Соцмережі", "Англійська мова",
-            "Комп'ютери", "Спілкування", "Малювання", "Аналітика",
-            "Маркетинг", "IT-сфера", "Кібербезпека", "TikTok / Shorts",
-            "Програмування", "Музика", "Спорт", "Дизайн",
-            "Фотографія", "Писати тексти", "Організація подій", "Психологія",
-            "Штучний інтелект", "Екологія", "Фінанси", "Блогерство"
+            "Ігри", "Відеомонтаж", "Соцмережі", "Англійська мова", "Комп'ютери", "Спілкування", "Малювання", "Аналітика",
+            "Маркетинг", "IT-сфера", "Кібербезпека", "TikTok / Shorts", "Програмування", "Музика", "Спорт", "Дизайн",
+            "Фотографія", "Писати тексти", "Організація подій", "Психологія", "Штучний інтелект", "Екологія", "Фінанси", "Блогерство",
+            "Робота руками", "Техніка", "Автомобілі", "Кулінарія", "Будівництво", "Електрика", "Зварювання", "Сільське господарство", "Ремонт"
         ];
 
         let zonesData = {
@@ -170,16 +181,15 @@
 
         let draggedTag = null;
         let draggedFrom = null;
+        let currentSuggestZone = null;
+        let currentSuggestions = [];
 
         window.addEventListener("DOMContentLoaded", () => {
             renderTags();
             checkApiKeyStatus();
             initDragAndDrop();
-
             const savedKey = localStorage.getItem('groq_api_key');
-            if (savedKey) {
-                document.getElementById('apiKeyInput').value = savedKey;
-            }
+            if (savedKey) document.getElementById('apiKeyInput').value = savedKey;
         });
 
         function renderTags() {
@@ -196,9 +206,9 @@
                 <div draggable="true" class="drag-item px-2.5 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-lg text-xs font-medium flex items-center gap-1 shadow-sm transition"
                      ondragstart="onDragStart(event, '${text.replace(/'/g, "\\'")}', '${location}')">
                     <span>${text}</span>
-                    <button type="button" onclick="removeTag('${text.replace(/'/g, "\\'")}', '${location}')" class="text-slate-500 hover:text-rose-400 ml-1">✕</button>
-                </div>
-            `;
+                    <button type="button" onclick="event.stopPropagation(); removeTag('${text.replace(/'/g, "\\'")}', '${location}')"
+                            class="text-slate-500 hover:text-rose-400 ml-1 text-sm leading-none">✕</button>
+                </div>`;
         }
 
         function onDragStart(event, text, location) {
@@ -237,6 +247,9 @@
 
         function removeTag(text, location) {
             zonesData[location] = zonesData[location].filter(t => t !== text);
+            if (!zonesData.bank.includes(text)) {
+                zonesData.bank.push(text);
+            }
             renderTags();
         }
 
@@ -253,14 +266,12 @@
         function openSettingsModal() { document.getElementById('settingsModal').classList.remove('hidden'); }
         function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); }
         function closeResultModal() { document.getElementById('resultModal').classList.add('hidden'); }
+        function closeSuggestModal() { document.getElementById('suggestModal').classList.add('hidden'); }
 
         function saveApiKey() {
             const key = document.getElementById('apiKeyInput').value.trim();
-            if (key) {
-                localStorage.setItem('groq_api_key', key);
-            } else {
-                localStorage.removeItem('groq_api_key');
-            }
+            if (key) localStorage.setItem('groq_api_key', key);
+            else localStorage.removeItem('groq_api_key');
             checkApiKeyStatus();
             closeSettingsModal();
         }
@@ -274,10 +285,123 @@
             document.getElementById(`demo-box-${index}`).classList.toggle('hidden');
         }
 
+        async function suggestTags(zone) {
+            currentSuggestZone = zone;
+            const apiKey = localStorage.getItem('groq_api_key');
+
+            if (!apiKey) {
+                alert("Спочатку додайте Groq API Key у налаштуваннях ШІ");
+                openSettingsModal();
+                return;
+            }
+
+            if (zonesData.love.length === 0 && zonesData.skill.length === 0) {
+                alert("Спочатку додайте хоча б кілька тегів у зони «Любить» або «Вміє»");
+                return;
+            }
+
+            const modal = document.getElementById('suggestModal');
+            const content = document.getElementById('suggestContent');
+            document.getElementById('suggestTitle').innerText = zone === 'need' ? "Що потрібно світу" : "За що платять гроші";
+            document.getElementById('suggestSubtitle').innerText = "Оберіть теги, які хочете додати";
+
+            content.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-8 space-y-3">
+                    <div class="w-7 h-7 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-xs text-slate-400">ШІ підбирає релевантні теги...</p>
+                </div>`;
+            modal.classList.remove('hidden');
+
+            const love = zonesData.love.join(', ') || 'не вказано';
+            const skill = zonesData.skill.join(', ') || 'не вказано';
+            const zoneName = zone === 'need' ? 'ПОТРІБНО СВІТУ' : 'ПЛАТЯТЬ ГРОШІ';
+
+            const prompt = `Ти експерт з профорієнтації. На основі інтересів і навичок запропонуй релевантні теги.
+
+Любить: ${love}
+Вміє: ${skill}
+
+Запропонуй 5-6 коротких тегів українською для зони "${zoneName}".
+Включай як сучасні цифрові, так і практичні/робітничі варіанти.
+
+Відповідай ТІЛЬКИ валідним JSON:
+{
+  "tags": ["тег1", "тег2", "тег3", "тег4", "тег5"]
+}`;
+
+            try {
+                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "openai/gpt-oss-20b",
+                        messages: [
+                            { role: "system", content: "Відповідай тільки валідним JSON українською." },
+                            { role: "user", content: prompt }
+                        ],
+                        temperature: 0.4,
+                        max_tokens: 400,
+                        response_format: { type: "json_object" }
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error?.message || "Помилка API");
+
+                let raw = data.choices?.[0]?.message?.content || "";
+                raw = raw.trim().replace(/^```json\s*/i, '').replace(/\s*```$/, '');
+                const parsed = JSON.parse(raw);
+                currentSuggestions = parsed.tags || [];
+                renderSuggestions();
+            } catch (err) {
+                console.warn(err);
+                content.innerHTML = `<p class="text-sm text-rose-400 text-center py-6">Не вдалося отримати пропозиції</p>`;
+            }
+        }
+
+        function renderSuggestions() {
+            const content = document.getElementById('suggestContent');
+            if (!currentSuggestions.length) {
+                content.innerHTML = `<p class="text-sm text-slate-400 text-center py-6">Пропозицій немає</p>`;
+                return;
+            }
+            content.innerHTML = currentSuggestions.map(tag => `
+                <div class="flex items-center justify-between bg-slate-950 border border-slate-800 rounded-xl px-4 py-3">
+                    <span class="text-sm text-slate-200">${tag}</span>
+                    <button onclick="addSuggestion('${tag.replace(/'/g, "\\'")}')" class="px-3 py-1 text-xs bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition">+ Додати</button>
+                </div>
+            `).join('');
+        }
+
+        function addSuggestion(tag) {
+            if (!zonesData[currentSuggestZone].includes(tag)) {
+                zonesData[currentSuggestZone].push(tag);
+                zonesData.bank = zonesData.bank.filter(t => t !== tag);
+                renderTags();
+            }
+            currentSuggestions = currentSuggestions.filter(t => t !== tag);
+            renderSuggestions();
+        }
+
+        function addAllSuggestions() {
+            currentSuggestions.forEach(tag => {
+                if (!zonesData[currentSuggestZone].includes(tag)) {
+                    zonesData[currentSuggestZone].push(tag);
+                    zonesData.bank = zonesData.bank.filter(t => t !== tag);
+                }
+            });
+            currentSuggestions = [];
+            renderTags();
+            closeSuggestModal();
+        }
+
         function renderCardsUI(cardsData, parentMsg, subtitleText) {
             const container = document.getElementById('resultContent');
             const subtitle = document.getElementById('resultSubtitle');
-            const icons = ["🎬", "📢", "🎮", "💡", "🚀", "📈", "💻", "🎨", "⚡", "🔒", "📊"];
+            const icons = ["🎬", "📢", "🎮", "💡", "🚀", "📈", "💻", "🎨", "⚡", "🔧", "🏗️", "🍳", "🛠️"];
 
             let html = `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 ${cardsData.map((card, idx) => `
@@ -301,16 +425,14 @@
             if (parentMsg) {
                 html += `
                     <div class="bg-slate-950/90 border border-slate-800 p-5 rounded-2xl space-y-2 mt-4 shadow-xl">
-                        <div class="flex items-center gap-2 text-amber-400 font-bold text-xs">💬 Повідомлення для батьків та фасилітаторів:</div>
+                        <div class="flex items-center gap-2 text-amber-400 font-bold text-xs">💬 Повідомлення для батьків:</div>
                         <p class="text-xs text-slate-300 italic leading-relaxed">«${parentMsg}»</p>
                     </div>`;
             }
-
             container.innerHTML = html;
             subtitle.innerText = subtitleText;
         }
 
-        // ====================== ЛОКАЛЬНИЙ ГЕНЕРАТОР ======================
         function generateDeepLocalResult() {
             const love = zonesData.love || [];
             const skill = zonesData.skill || [];
@@ -321,16 +443,16 @@
             const score = (keywords) => keywords.reduce((acc, kw) => acc + all.filter(item => item.includes(kw)).length, 0);
 
             const templates = [
-                { keys: ['ігр', 'гейм', 'game'], title: "Гейм-дизайнер / Ігровий продюсер", desc: (s) => `Пристрасть до ігор + навички (${s || 'креатив'}) дозволяють створювати ігрові механіки.`, demo: "Створення GDD та прототипу рівня." },
-                { keys: ['програм', 'код', 'python', 'javascript', 'it'], title: "Full-Stack / Software Developer", desc: (s) => `Інтерес до технологій і навички програмування дають змогу створювати сучасні продукти.`, demo: "Розробка вебзастосунку (фронт + бек)." },
-                { keys: ['кібер', 'безпек', 'security'], title: "Спеціаліст з кібербезпеки", desc: (s) => `Аналітичне мислення + інтерес до захисту систем.`, demo: "Базовий аудит безпеки + звіт." },
-                { keys: ['малюв', 'дизайн', 'ui', 'ux', 'figma'], title: "UI/UX Designer / Digital Artist", desc: (s) => `Творчий потенціал + вміння працювати з візуалом.`, demo: "Дизайн інтерфейсу в Figma." },
-                { keys: ['відео', 'монтаж', 'youtube', 'tiktok', 'контент'], title: "Контент-кріейтор / Відеопродюсер", desc: (s) => `Вміння створювати відео + розуміння соцмереж.`, demo: "Серія коротких відео з аналітикою." },
-                { keys: ['маркетинг', 'smm', 'соцмереж', 'блог'], title: "Digital Marketing & Content Strategist", desc: (s) => `Розуміння аудиторії та вміння комунікувати.`, demo: "Маркетингова стратегія + контент-план." },
-                { keys: ['психолог', 'спілкув', 'люд'], title: "Product / Community Manager", desc: (s) => `Сильні софт-скіли + робота з людьми.`, demo: "Дорожня карта продукту + онлайн-івент." },
-                { keys: ['аналіт', 'дан', 'data'], title: "Data Analyst / Бізнес-аналітик", desc: (s) => `Аналітичний склад розуму + інтерес до даних.`, demo: "Аналіз датасету + дашборд." },
-                { keys: ['штучн', 'ai', 'нейро'], title: "AI-спеціаліст / Prompt Engineer", desc: (s) => `Інтерес до штучного інтелекту + практичні навички.`, demo: "Створення AI-агента." },
-                { keys: ['фінанс', 'грош', 'бізнес'], title: "Фінансовий аналітик / Підприємець", desc: (s) => `Розуміння грошей і ринку.`, demo: "Бізнес-модель + фінансовий план." }
+                { keys: ['ігр', 'гейм'], title: "Гейм-дизайнер", desc: (s) => `Пристрасть до ігор + навички (${s || 'креатив'}).`, demo: "Створення прототипу гри." },
+                { keys: ['програм', 'код', 'it'], title: "Програміст", desc: (s) => `Інтерес до технологій і навички програмування.`, demo: "Розробка простого вебзастосунку." },
+                { keys: ['дизайн', 'малюв', 'ui'], title: "Дизайнер", desc: (s) => `Творчий потенціал + візуальні навички.`, demo: "Дизайн інтерфейсу." },
+                { keys: ['відео', 'монтаж', 'контент'], title: "Контент-кріейтор", desc: (s) => `Вміння створювати відео + розуміння соцмереж.`, demo: "Серія коротких відео." },
+                { keys: ['електр'], title: "Електрик", desc: (s) => `Практичні навички роботи з електрикою.`, demo: "Монтаж електропроводки." },
+                { keys: ['звар'], title: "Зварювальник", desc: (s) => `Робота руками + точність.`, demo: "Виконання зварних з’єднань." },
+                { keys: ['авто', 'механік', 'слюсар'], title: "Автослюсар", desc: (s) => `Любов до техніки та ремонт.`, demo: "Діагностика автомобіля." },
+                { keys: ['кухн', 'готув', 'кулінар'], title: "Кухар", desc: (s) => `Творчість + робота руками.`, demo: "Приготування страв." },
+                { keys: ['будів', 'ремонт'], title: "Будівельник", desc: (s) => `Практичні навички + фізична робота.`, demo: "Оздоблювальні роботи." },
+                { keys: ['дерев', 'столяр'], title: "Столяр", desc: (s) => `Робота з деревом + творчість.`, demo: "Виготовлення меблів." }
             ];
 
             let scored = templates.map(t => ({...t, score: score(t.keys)})).filter(t => t.score > 0);
@@ -342,23 +464,19 @@
             });
 
             while (cards.length < 3) {
-                const l = love[cards.length % Math.max(love.length, 1)] || 'сучасні технології';
-                const s = skill[cards.length % Math.max(skill.length, 1)] || 'цифрові навички';
+                const l = love[cards.length % Math.max(love.length, 1)] || 'цікаві справи';
+                const s = skill[cards.length % Math.max(skill.length, 1)] || 'практичні навички';
                 cards.push({
-                    title: `Гібридний спеціаліст: ${l} + ${s}`,
+                    title: `Спеціаліст: ${l} + ${s}`,
                     desc: `Поєднання інтересу до «${l}» та навичок у «${s}».`,
-                    demo: `Мініпроєкт на перетині ${l.toLowerCase()} та ${s.toLowerCase()}.`
+                    demo: `Практичний проєкт на перетині цих напрямків.`
                 });
             }
 
-            const interests = [...new Set([...love, ...need])].join(', ') || 'розвиток';
-            const strengths = [...new Set([...skill, ...paid])].join(', ') || 'практичні навички';
-            const parentMsg = `Учень демонструє сильне поєднання інтересів (${interests}) та сильних сторін (${strengths}).`;
-
+            const parentMsg = `Учень має інтереси (${[...new Set([...love, ...need])].join(', ') || 'різні'}) та сильні сторони (${[...new Set([...skill, ...paid])].join(', ') || 'практичні'}).`;
             renderCardsUI(cards.slice(0, 3), parentMsg, "Персоналізований розрахунок (локальний режим)");
         }
 
-        // ====================== GROQ API ======================
         async function analyzeIkigai() {
             const modal = document.getElementById('resultModal');
             const container = document.getElementById('resultContent');
@@ -367,9 +485,8 @@
             container.innerHTML = `
                 <div class="flex flex-col items-center justify-center py-12 space-y-3">
                     <div class="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                    <p class="text-xs text-slate-400">Аналізую карту Ікігай через Groq...</p>
-                </div>
-            `;
+                    <p class="text-xs text-slate-400">Аналізую карту Ікігай...</p>
+                </div>`;
 
             const apiKey = localStorage.getItem('groq_api_key');
             if (!apiKey) {
@@ -384,58 +501,28 @@
 
             const prompt = `Ти — досвідчений український кар'єрний консультант. Проаналізуй карту Ікігай.
 
-Дані учня:
-- ЛЮБИТЬ (пристрасть): ${love}
-- ВМІЄ (навички): ${skill}
+Дані:
+- ЛЮБИТЬ: ${love}
+- ВМІЄ: ${skill}
 - ПОТРІБНО СВІТУ: ${need}
 - ПЛАТЯТЬ ГРОШІ: ${paid}
 
-Завдання:
-1. Запропонуй рівно 3 сучасні професії.
-2. Кожна професія повинна логічно витікати з перетину зон.
-3. Опис — 1-2 короткі мотивуючі речення.
-4. Для кожної професії дай реалістичний приклад демо-проєкту.
-5. Напиши коротке повідомлення для батьків.
+Запропонуй рівно 3 різні професії (можна як сучасні цифрові, так і робітничі/практичні).
+Для кожної дай короткий опис і приклад демо-проєкту.
+Напиши коротке повідомлення для батьків.
 
-ДУЖЕ ВАЖЛИВО:
-- Уся відповідь повинна бути УКРАЇНСЬКОЮ мовою.
-- Назви професій, описи, демо-проєкти і повідомлення для батьків — тільки українською.
-- Не використовуй англійські назви професій, якщо є український відповідник.
-- Відповідай ТІЛЬКИ валідним JSON.
-- Не додавай ніякого тексту до або після JSON.
-- Не використовуй markdown.
-
-Структура відповіді має бути точно такою:
+Відповідай ТІЛЬКИ валідним JSON українською:
 
 {
   "cards": [
-    {
-      "title": "Назва професії українською",
-      "desc": "Короткий опис українською",
-      "demo": "Приклад проєкту українською"
-    },
-    {
-      "title": "Назва професії українською",
-      "desc": "Короткий опис українською",
-      "demo": "Приклад проєкту українською"
-    },
-    {
-      "title": "Назва професії українською",
-      "desc": "Короткий опис українською",
-      "demo": "Приклад проєкту українською"
-    }
+    {"title": "Назва", "desc": "Опис", "demo": "Приклад"},
+    {"title": "Назва", "desc": "Опис", "demo": "Приклад"},
+    {"title": "Назва", "desc": "Опис", "demo": "Приклад"}
   ],
-  "parentMessage": "Коротке повідомлення для батьків українською"
+  "parentMessage": "Повідомлення для батьків"
 }`;
 
-            const models = [
-                "openai/gpt-oss-20b",
-                "openai/gpt-oss-120b",
-                "qwen/qwen3.8-27b",
-                "openai/gpt-oss-safeguard-20b"
-            ];
-
-            let lastError = null;
+            const models = ["openai/gpt-oss-20b", "openai/gpt-oss-120b", "qwen/qwen3.8-27b"];
 
             for (const model of models) {
                 try {
@@ -446,58 +533,34 @@
                             "Authorization": `Bearer ${apiKey}`
                         },
                         body: JSON.stringify({
-                            model: model,
+                            model,
                             messages: [
-                                {
-                                    role: "system",
-                                    content: "Ти завжди відповідаєш тільки чистим валідним JSON українською мовою. Без markdown і без зайвого тексту."
-                                },
-                                {
-                                    role: "user",
-                                    content: prompt
-                                }
+                                { role: "system", content: "Відповідай тільки чистим валідним JSON українською мовою." },
+                                { role: "user", content: prompt }
                             ],
-                            temperature: 0.3,
+                            temperature: 0.35,
                             max_tokens: 1024,
                             response_format: { type: "json_object" }
                         })
                     });
 
                     const data = await response.json();
+                    if (!response.ok) throw new Error(data.error?.message);
 
-                    if (!response.ok) {
-                        throw new Error(data.error?.message || `HTTP ${response.status}`);
+                    let raw = data.choices?.[0]?.message?.content || "";
+                    raw = raw.trim().replace(/^```json\s*/i, '').replace(/\s*```$/, '');
+                    const parsed = JSON.parse(raw);
+
+                    if (parsed.cards?.length >= 3) {
+                        renderCardsUI(parsed.cards.slice(0, 3), parsed.parentMessage, `Згенеровано за допомогою Groq (${model})`);
+                        return;
                     }
-
-                    let rawText = data.choices?.[0]?.message?.content;
-                    if (!rawText) throw new Error("Порожня відповідь");
-
-                    rawText = rawText.trim()
-                        .replace(/^```json\s*/i, '')
-                        .replace(/^```\s*/i, '')
-                        .replace(/\s*```$/, '');
-
-                    const parsed = JSON.parse(rawText);
-
-                    if (!parsed.cards || !Array.isArray(parsed.cards) || parsed.cards.length < 3) {
-                        throw new Error("Некоректна структура відповіді");
-                    }
-
-                    renderCardsUI(
-                        parsed.cards.slice(0, 3),
-                        parsed.parentMessage || "Аналіз виконано за допомогою Groq.",
-                        `Згенеровано за допомогою Groq (${model})`
-                    );
-                    return;
-
                 } catch (err) {
-                    lastError = err;
-                    console.warn(`Модель ${model} не спрацювала:`, err.message);
+                    console.warn(err.message);
                 }
             }
 
-            console.warn("Усі моделі Groq недоступні, використовуємо локальний аналізатор:", lastError?.message);
-            setTimeout(() => generateDeepLocalResult(), 350);
+            setTimeout(() => generateDeepLocalResult(), 300);
         }
     </script>
 </body>
