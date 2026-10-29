@@ -117,7 +117,7 @@
     <div id="settingsModal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
             <h3 class="text-lg font-bold text-slate-100">⚙️ Налаштування ШІ</h3>
-            <p class="text-xs text-slate-400">Використовується Groq. Якщо ключ не вказано — працює локальний аналізатор.</p>
+            <p class="text-xs text-slate-400">Вставте свій Groq API Key. Якщо ключ не вказано — працює локальний аналізатор.</p>
             <div>
                 <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Groq API Key</label>
                 <input type="password" id="apiKeyInput" placeholder="gsk_..."
@@ -172,10 +172,6 @@
         let draggedFrom = null;
 
         window.addEventListener("DOMContentLoaded", () => {
-            if (!localStorage.getItem('groq_api_key')) {
-                localStorage.setItem('groq_api_key', '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');
-            }
-
             renderTags();
             checkApiKeyStatus();
             initDragAndDrop();
@@ -260,8 +256,11 @@
 
         function saveApiKey() {
             const key = document.getElementById('apiKeyInput').value.trim();
-            if (key) localStorage.setItem('groq_api_key', key);
-            else localStorage.removeItem('groq_api_key');
+            if (key) {
+                localStorage.setItem('groq_api_key', key);
+            } else {
+                localStorage.removeItem('groq_api_key');
+            }
             checkApiKeyStatus();
             closeSettingsModal();
         }
